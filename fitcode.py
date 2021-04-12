@@ -95,7 +95,7 @@ def load_data():
     img_names.sort()
     gt_imgs = []
     for i in range(len(img_names)):
-        if i %4 ==0:
+        if i == 4:
             break
         img_p = os.path.join( img_path, img_names[i])
         # align_face(img_p)
