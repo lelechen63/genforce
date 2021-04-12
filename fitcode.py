@@ -58,6 +58,9 @@ def parse_args():
     parser.add_argument('--max_iter_num', type=int, default=1000,
                         help='maximun optimization number. (default: %(default)s)')
 
+    parser.add_argument('--device_ids', type=str, default='0')
+
+    
     parser.add_argument('--generate_html', type=bool_parser, default=True,
                         help='Whether to use HTML page to visualize the '
                              'synthesized results. (default: %(default)s)')
