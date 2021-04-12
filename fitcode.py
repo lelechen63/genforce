@@ -52,10 +52,10 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, default=3,
                         help='Batch size. (default: %(default)s)')
 
-    parser.add_argument('--lr', type=float, default=0.05,
+    parser.add_argument('--lr', type=float, default=0.2,
                         help='learning rate. (default: %(default)s)')
 
-    parser.add_argument('--max_iter_num', type=int, default=1,
+    parser.add_argument('--max_iter_num', type=int, default=1000,
                         help='maximun optimization number. (default: %(default)s)')
 
     parser.add_argument('--device_ids', type=str, default='0')
