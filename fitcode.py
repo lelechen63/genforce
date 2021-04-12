@@ -32,7 +32,7 @@ def preprocess(images):
     images = images.transpose(2,0,1)
     images = (images - 0.5) / 255.0 * 2 - 1
     images = np.clip(images , -1.0, 1.0)
-    images = torch.FloatTensor(images)
+    # images = torch.FloatTensor(images)
     return images
 
 def parse_args():
@@ -98,6 +98,7 @@ def load_data():
         # print (aligned_img.shape)
         gt_imgs.append(preprocess(aligned_img))
     gt_imgs = np.asarray(gt_imgs)
+    gt_imgs = torch.FloatTensor(gt_imgs)
     return gt_imgs
 
 
