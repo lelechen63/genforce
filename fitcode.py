@@ -188,7 +188,7 @@ def main():
         batch_gt_img =gt_imgs[frm_idx_start, frm_idx_end]
 
         # Define the optimizer
-        code_optimizer = troch.optim.Adam( [
+        code_optimizer = torch.optim.Adam( [
             { 'params': batch_code, 'lr': args.lr }
         ] )
 
