@@ -224,7 +224,11 @@ def main():
                 print(  ' iter [%d/%d]: global %f, code_reg %f'
                    % (  iter_id + 1, args.max_iter_num ,  global_pix_loss.item(),
                        code_reg_loss.item()), end = '\r' )
-    
+
+                # Reduce the lr
+                    code_optimizer.param_groups[ 0 ][ 'lr' ] *= 0.5
+                    print( ' Reduce learning rate to %f' % (code_optimizer.param_groups[ 0 ][ 'lr' ] ) )
+
         # Set the data
         n_code = batch_code.detach().cpu().numpy()
         for sample_id in range( sample_num ):
