@@ -49,10 +49,10 @@ def parse_args():
     parser.add_argument('--num', type=int, default=100,
                         help='Number of samples to synthesize. '
                              '(default: %(default)s)')
-    parser.add_argument('--batch_size', type=int, default=1,
+    parser.add_argument('--batch_size', type=int, default=16,
                         help='Batch size. (default: %(default)s)')
 
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.05,
                         help='learning rate. (default: %(default)s)')
 
     parser.add_argument('--max_iter_num', type=int, default=1000,
@@ -92,6 +92,8 @@ def load_data():
     img_names.sort()
     gt_imgs = []
     for i in range(len(img_names)):
+        if i %4 ==0:
+            break
         img_p = os.path.join( img_path, img_names[i])
         # align_face(img_p)
         aligned_img = cv2.imread(img_p.replace( 'original', 'aligned'))
@@ -150,7 +152,11 @@ def main():
         generator.load_state_dict(checkpoint['generator_smooth'])
     else:
         generator.load_state_dict(checkpoint['generator'])
-    generator = generator.cuda()
+    # generator = generator.cuda()
+    device_ids = [int(i) for i in args.device_ids.split(',')]
+
+    generator = torch.nn.DataParallel(generator, device_ids=device_ids).cuda()
+
     generator.eval()
     print(f'Finish loading checkpoint.')
 
