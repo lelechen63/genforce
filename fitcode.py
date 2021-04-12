@@ -181,14 +181,14 @@ def main():
             frm_idx = frm_idx_start + sample_id
             batch_code.append( code[ frm_idx ] )
         batch_code = np.asarray(batch_code)
-        batch_code = th.tensor( batch_code, dtype = th.float32 ).to( device )
+        batch_code = torch.tensor( batch_code, dtype = torch.float32 ).to( device )
         batch_code.requires_grad = True
 
         # get gt image batch
         batch_gt_img =gt_imgs[frm_idx_start, frm_idx_end]
 
         # Define the optimizer
-        code_optimizer = th.optim.Adam( [
+        code_optimizer = troch.optim.Adam( [
             { 'params': batch_code, 'lr': args.lr }
         ] )
 
