@@ -95,8 +95,9 @@ def load_data():
         img_p = os.path.join( img_path, img_names[i])
         # align_face(img_p)
         aligned_img = cv2.imread(img_p.replace( 'original', 'aligned'))
-        print (aligned_img.shape)
+        # print (aligned_img.shape)
         gt_imgs.append(preprocess(aligned_img))
+    gt_imgs = np.asarray(gt_imgs)
     return gt_imgs
 
 
