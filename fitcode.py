@@ -60,7 +60,7 @@ def parse_args():
 
     parser.add_argument('--device_ids', type=str, default='0')
 
-    
+
     parser.add_argument('--generate_html', type=bool_parser, default=True,
                         help='Whether to use HTML page to visualize the '
                              'synthesized results. (default: %(default)s)')
@@ -155,6 +155,8 @@ def main():
         generator.load_state_dict(checkpoint['generator_smooth'])
     else:
         generator.load_state_dict(checkpoint['generator'])
+    
+    code_dim = generator.z_space_dim
     # generator = generator.cuda()
     device_ids = [int(i) for i in args.device_ids.split(',')]
 
@@ -173,7 +175,7 @@ def main():
 
     total_num = gt_imgs.shape[0]
     # define the code
-    code = np.zeros( ( total_num, generator.z_space_dim ), dtype = np.float32)
+    code = np.zeros( ( total_num, code_dim ), dtype = np.float32)
    
 
     for batch_idx in tqdm(range(0, total_num, args.batch_size)): 
