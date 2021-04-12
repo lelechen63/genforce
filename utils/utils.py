@@ -149,4 +149,4 @@ def trans_video_to_imgs( video_path, save_img_folder, write_img = False ):
     return frm_num
 
 
-trans_video_to_imgs( '/home/cxu-serve/p1/lchen63/nerf/data/mead/001.mp4', '/home/cxu-serve/p1/lchen63/nerf/data/mead/001/original', write_img = True )
+# trans_video_to_imgs( '/home/cxu-serve/p1/lchen63/nerf/data/mead/001.mp4', '/home/cxu-serve/p1/lchen63/nerf/data/mead/001/original', write_img = True )
