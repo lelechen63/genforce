@@ -64,6 +64,16 @@ def parse_args():
     return parser.parse_args()
 
 
+
+
+
+
+def load_data():
+    """ load the video data"""
+
+    
+
+
 def main():
     """Main function."""
     args = parse_args()
@@ -128,7 +138,7 @@ def main():
         code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
         with torch.no_grad():
             images = generator(code, **synthesis_kwargs)['image']
-
+            # images shape [1,3,1024,1024]
             print (images.shape)
 
             images = postprocess(images)
