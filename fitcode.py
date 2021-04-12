@@ -238,7 +238,7 @@ def main():
         html = HtmlPageVisualizer(grid_size=total_num)
     for batch_idx in tqdm(range(0, total_num, args.batch_size)):
         sub_indices = indices[batch_idx:batch_idx + args.batch_size]
-        print (code.shape, code.type())
+        print (code.shape)
         t_code = torch.FloatTensor(code[sub_indices]).cuda()
         with torch.no_grad():
             images = generator(t_code, **synthesis_kwargs)['image']
