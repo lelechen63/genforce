@@ -123,7 +123,8 @@ def align_face(filepath):
         img = img.resize((output_size, output_size), PIL.Image.ANTIALIAS)
 
     # Save aligned image.
-    return img
+    img.save(filepath.replace( 'original', 'aligned'))
+    # return img
 
 def trans_video_to_imgs( video_path, save_img_folder, write_img = False ):
     video_cap = cv2.VideoCapture(video_path)

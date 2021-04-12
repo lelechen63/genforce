@@ -76,8 +76,9 @@ def load_data():
     img_names.sort()
     for i in range(len(img_names)):
         img_p = os.path.join( img_path, img_names[i])
-        img = align_face(img_p)
-        print (img.shape)
+        align_face(img_p)
+        aligned_img = cv2.imread(img_p.replace( 'original', 'aligned'))
+        print (aligned_img.shape)
 
     
 
