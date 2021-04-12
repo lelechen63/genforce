@@ -27,6 +27,14 @@ def postprocess(images):
     return images
 
 
+def preprocess(images):
+    """Post-processes images from `numpy.ndarray` to `torch.Tensor`."""
+    images = images.transpose(2,0,1)
+    images = (image - 0.5) / 255.0 * 2 - 1
+    images = np.clip(images , -1.0, 1.0)
+    images = torch.FloatTensor(images)
+    return images
+
 def parse_args():
     """Parses arguments."""
     parser = argparse.ArgumentParser(
@@ -43,6 +51,13 @@ def parse_args():
                              '(default: %(default)s)')
     parser.add_argument('--batch_size', type=int, default=1,
                         help='Batch size. (default: %(default)s)')
+
+    parser.add_argument('--lr', type=float, default=0.01,
+                        help='learning rate. (default: %(default)s)')
+
+    parser.add_argument('--max_iter_num', type=int, default=1000,
+                        help='maximun optimization number. (default: %(default)s)')
+
     parser.add_argument('--generate_html', type=bool_parser, default=True,
                         help='Whether to use HTML page to visualize the '
                              'synthesized results. (default: %(default)s)')
@@ -75,11 +90,15 @@ def load_data():
     img_path = '/home/cxu-serve/p1/lchen63/nerf/data/mead/001/original'
     img_names = os.listdir(img_path)
     img_names.sort()
+    gt_imgs = []
     for i in range(len(img_names)):
         img_p = os.path.join( img_path, img_names[i])
-        align_face(img_p)
+        # align_face(img_p)
         aligned_img = cv2.imread(img_p.replace( 'original', 'aligned'))
         print (aligned_img.shape)
+        gt_imgs.append(preprocess(aligned_img))
+    return gt_imgs
+
 
     
 
@@ -87,8 +106,7 @@ def load_data():
 def main():
     """Main function."""
     args = parse_args()
-    if args.num <= 0:
-        return
+   
     if not args.save_raw_synthesis and not args.generate_html:
         return
 
@@ -138,14 +156,77 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
+    # load gt images:
+    gt_imgs = load_data().cuda()
+    print (gt_imgs.shape)
+
+    total_num = gt_imgs.shape[0]
+    # define the code
+    code = np.zeros( ( total_num, generator.z_space_dim ), dtype = np.float32)
+   
+
+    for batch_idx in tqdm(range(0, total_num, args.batch_size)): 
+        frm_idx_start = batch_idx
+        frm_idx_end = np.min( [ total_num, frm_idx_start + args.batch_size ] )
+        sample_num = frm_idx_end - frm_idx_start
+
+        print( 'Optim lightingcode based on pca batch [%d/%d], frame [%d/%d]'
+               % (batch_idx/args.batch_size + 1, total_num, frm_idx_start, frm_idx_end) )
+
+        # get code batch
+        batch_code = [ ]
+        for sample_id in range( sample_num  ):
+            frm_idx = frm_idx_start + sample_id
+            batch_code.append( code[ frm_idx ] )
+        batch_code = np.asarray(batch_code)
+        batch_code = th.tensor( batch_code, dtype = th.float32 ).to( device )
+        batch_code.requires_grad = True
+
+        # get gt image batch
+        batch_gt_img =gt_imgs[frm_idx_start, frm_idx_end]
+
+        # Define the optimizer
+        code_optimizer = th.optim.Adam( [
+            { 'params': batch_code, 'lr': args.lr }
+        ] )
+
+        # optimize
+        for iter_id in range( args. max_iter_num ):
+            images = generator(batch_code, **synthesis_kwargs)['image']
+            # SIZE: (BATCH_SIZE , 3,1024,1024) 
+
+            # calculate loss:
+            global_pix_loss = (batch_gt_img  - images).abs().mean()
+            code_reg_loss = (batch_code ** 2).mean()
+            loss = global_pix_loss + code_reg_loss * 0.01
+
+            # Optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            # Print errors
+            if iter_id == 0 or ( iter_id + 1 ) % 100 == 0:
+                print(  ' iter [%d/%d]: global %f, code_reg %f'
+                   % (  iter_id + 1, args.max_iter_num ,  global_pix_loss.item(),
+                       code_reg_loss.item()), end = '\r' )
+    
+        # Set the data
+        n_code = batch_code.detach().cpu().numpy()
+        for sample_id in range( sample_num ):
+            frm_idx = frm_idx_start + sample_id
+            code[ frm_idx ] = n_code[ sample_id ]
+
+
     # Sample and synthesize.
-    print(f'Synthesizing {args.num} samples ...')
-    indices = list(range(args.num))
+    print(f'Synthesizing {total_num} samples ...')
+    indices = list(range(total_num))
     if args.generate_html:
-        html = HtmlPageVisualizer(grid_size=args.num)
-    for batch_idx in tqdm(range(0, args.num, args.batch_size)):
+        html = HtmlPageVisualizer(grid_size=total_num)
+    for batch_idx in tqdm(range(0, total_num, args.batch_size)):
         sub_indices = indices[batch_idx:batch_idx + args.batch_size]
-        code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
+        code = torch.FloatTensor(code).cuda()
+        # code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
         with torch.no_grad():
             images = generator(code, **synthesis_kwargs)['image']
             # images shape [1,3,1024,1024]
@@ -163,7 +244,7 @@ def main():
                               text=f'Sample {sub_idx:06d}')
     if args.generate_html:
         html.save(os.path.join(work_dir, f'{job_name}.html'))
-    print(f'Finish synthesizing {args.num} samples.')
+    print(f'Finish synthesizing {total_num} samples.')
 
 
 if __name__ == '__main__':
