@@ -8,6 +8,7 @@ from tqdm import tqdm
 import numpy as np
 
 import torch
+import cv2
 
 from models import MODEL_ZOO
 from models import build_generator
