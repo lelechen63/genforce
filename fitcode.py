@@ -30,7 +30,7 @@ def postprocess(images):
 def preprocess(images):
     """Post-processes images from `numpy.ndarray` to `torch.Tensor`."""
     images = images.transpose(2,0,1)
-    images = (image - 0.5) / 255.0 * 2 - 1
+    images = (images - 0.5) / 255.0 * 2 - 1
     images = np.clip(images , -1.0, 1.0)
     images = torch.FloatTensor(images)
     return images
