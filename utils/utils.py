@@ -10,7 +10,7 @@ import dlib
 
 
 # download model from: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('/u/lchen63/github/genforce/utils/shape_predictor_68_face_landmarks.dat')
 
 def get_landmark(filepath):
     """get landmark with dlib
