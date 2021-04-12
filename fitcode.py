@@ -55,7 +55,7 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=0.05,
                         help='learning rate. (default: %(default)s)')
 
-    parser.add_argument('--max_iter_num', type=int, default=1000,
+    parser.add_argument('--max_iter_num', type=int, default=1,
                         help='maximun optimization number. (default: %(default)s)')
 
     parser.add_argument('--device_ids', type=str, default='0')
@@ -238,10 +238,10 @@ def main():
         html = HtmlPageVisualizer(grid_size=total_num)
     for batch_idx in tqdm(range(0, total_num, args.batch_size)):
         sub_indices = indices[batch_idx:batch_idx + args.batch_size]
-        code = torch.FloatTensor(code).cuda()
-        # code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
+        print (code.shape, code.type())
+        t_code = torch.FloatTensor(code[sub_indices]).cuda()
         with torch.no_grad():
-            images = generator(code, **synthesis_kwargs)['image']
+            images = generator(t_code, **synthesis_kwargs)['image']
             # images shape [1,3,1024,1024]
             print (images.shape)
 
@@ -266,10 +266,8 @@ def main():
         html = HtmlPageVisualizer(grid_size=total_num)
     for batch_idx in tqdm(range(0, total_num, args.batch_size)):
         sub_indices = indices[batch_idx:batch_idx + args.batch_size]
-        code = torch.FloatTensor(code).cuda()
-        # code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
         with torch.no_grad():
-            images = generator(code, **synthesis_kwargs)['image']
+            images = gt_imgs[sub_indices]
             # images shape [1,3,1024,1024]
             print (images.shape)
 
@@ -277,7 +275,7 @@ def main():
         for sub_idx, image in zip(sub_indices, images):
             if args.save_raw_synthesis:
                 save_path = os.path.join(
-                    work_dir, job_name, f'{sub_idx:06d}.jpg')
+                    work_dir, job_name, f'{sub_idx:06d}_gt.jpg')
                 save_image(save_path, image)
             if args.generate_html:
                 row_idx, col_idx = divmod(sub_idx, html.num_cols)
