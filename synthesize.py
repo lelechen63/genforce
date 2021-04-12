@@ -125,7 +125,9 @@ def main():
         html = HtmlPageVisualizer(grid_size=args.num)
     for batch_idx in tqdm(range(0, args.num, args.batch_size)):
         sub_indices = indices[batch_idx:batch_idx + args.batch_size]
+        print (sub_indices)
         code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
+        print (code.shape)
         with torch.no_grad():
             images = generator(code, **synthesis_kwargs)['image']
             images = postprocess(images)

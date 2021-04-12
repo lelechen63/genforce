@@ -259,6 +259,34 @@ def main():
         html.save(os.path.join(work_dir, f'{job_name}.html'))
     print(f'Finish synthesizing {total_num} samples.')
 
+     # Sample and ground truth image.
+    print(f'Synthesizing {total_num} samples ...')
+    indices = list(range(total_num))
+    if args.generate_html:
+        html = HtmlPageVisualizer(grid_size=total_num)
+    for batch_idx in tqdm(range(0, total_num, args.batch_size)):
+        sub_indices = indices[batch_idx:batch_idx + args.batch_size]
+        code = torch.FloatTensor(code).cuda()
+        # code = torch.randn(len(sub_indices), generator.z_space_dim).cuda()
+        with torch.no_grad():
+            images = generator(code, **synthesis_kwargs)['image']
+            # images shape [1,3,1024,1024]
+            print (images.shape)
+
+            images = postprocess(images)
+        for sub_idx, image in zip(sub_indices, images):
+            if args.save_raw_synthesis:
+                save_path = os.path.join(
+                    work_dir, job_name, f'{sub_idx:06d}.jpg')
+                save_image(save_path, image)
+            if args.generate_html:
+                row_idx, col_idx = divmod(sub_idx, html.num_cols)
+                html.set_cell(row_idx, col_idx, image=image,
+                              text=f'Sample {sub_idx:06d}')
+    if args.generate_html:
+        html.save(os.path.join(work_dir, f'{job_name}_gt.html'))
+    print(f'Finish synthesizing {total_num} samples.')
+
 
 if __name__ == '__main__':
     load_data()
