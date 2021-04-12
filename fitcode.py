@@ -14,6 +14,7 @@ from models import build_generator
 from utils.misc import bool_parser
 from utils.visualizer import HtmlPageVisualizer
 from utils.visualizer import save_image
+from utils.utils import align_face
 
 
 def postprocess(images):
@@ -70,6 +71,13 @@ def parse_args():
 
 def load_data():
     """ load the video data"""
+    img_path = '/home/cxu-serve/p1/lchen63/nerf/data/mead/001/original'
+    img_names = os.listdir(img_path)
+    img_names.sort()
+    for i in range(len(img_names)):
+        img_p = os.path.join( img_path, img_names[i])
+        img = align_face(img_p)
+        print (img.shape)
 
     
 
@@ -157,4 +165,5 @@ def main():
 
 
 if __name__ == '__main__':
+    load_data()
     main()
