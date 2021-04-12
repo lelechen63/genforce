@@ -7,6 +7,7 @@ import glob
 import scipy
 import scipy.ndimage
 import dlib
+import numpy as np
 
 
 # download model from: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
