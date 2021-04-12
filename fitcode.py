@@ -49,7 +49,7 @@ def parse_args():
     parser.add_argument('--num', type=int, default=100,
                         help='Number of samples to synthesize. '
                              '(default: %(default)s)')
-    parser.add_argument('--batch_size', type=int, default=16,
+    parser.add_argument('--batch_size', type=int, default=3,
                         help='Batch size. (default: %(default)s)')
 
     parser.add_argument('--lr', type=float, default=0.05,
