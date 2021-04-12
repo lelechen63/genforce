@@ -226,8 +226,8 @@ def main():
                        code_reg_loss.item()), end = '\r' )
 
                 # Reduce the lr
-                    code_optimizer.param_groups[ 0 ][ 'lr' ] *= 0.5
-                    print( ' Reduce learning rate to %f' % (code_optimizer.param_groups[ 0 ][ 'lr' ] ) )
+                code_optimizer.param_groups[ 0 ][ 'lr' ] *= 0.5
+                print( ' Reduce learning rate to %f' % (code_optimizer.param_groups[ 0 ][ 'lr' ] ) )
 
         # Set the data
         n_code = batch_code.detach().cpu().numpy()
