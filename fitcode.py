@@ -181,7 +181,7 @@ def main():
             frm_idx = frm_idx_start + sample_id
             batch_code.append( code[ frm_idx ] )
         batch_code = np.asarray(batch_code)
-        batch_code = torch.tensor( batch_code, dtype = torch.float32 ).to( device )
+        batch_code = torch.tensor( batch_code, dtype = torch.float32 ).cuda()
         batch_code.requires_grad = True
 
         # get gt image batch
