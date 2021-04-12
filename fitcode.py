@@ -210,6 +210,10 @@ def main():
             # SIZE: (BATCH_SIZE , 3,1024,1024) 
 
             # calculate loss:
+            print (batch_gt_img.max(),batch_gt_img.min(),'========')
+
+            print (images.max(),images.min())
+
             global_pix_loss = (batch_gt_img  - images).abs().mean()
             code_reg_loss = (batch_code ** 2).mean()
             loss = global_pix_loss + code_reg_loss * 0.01
