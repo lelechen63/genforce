@@ -223,7 +223,7 @@ def main():
             if iter_id == 0 or ( iter_id + 1 ) % 100 == 0:
                 print(  ' iter [%d/%d]: global %f, code_reg %f'
                    % (  iter_id + 1, args.max_iter_num ,  global_pix_loss.item(),
-                       code_reg_loss.item()), end = '\r' )
+                       code_reg_loss.item()) )# , end = '\r' )
 
                 # Reduce the lr
                 code_optimizer.param_groups[ 0 ][ 'lr' ] *= 0.5
