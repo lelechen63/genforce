@@ -203,9 +203,9 @@ def main():
             loss = global_pix_loss + code_reg_loss * 0.01
 
             # Optimize
-            optimizer.zero_grad()
+            code_optimizer.zero_grad()
             loss.backward()
-            optimizer.step()
+            code_optimizer.step()
 
             # Print errors
             if iter_id == 0 or ( iter_id + 1 ) % 100 == 0:
