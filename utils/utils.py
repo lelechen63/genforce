@@ -151,4 +151,19 @@ def trans_video_to_imgs( video_path, save_img_folder, write_img = False ):
     return frm_num
 
 
-# trans_video_to_imgs( '/home/cxu-serve/p1/lchen63/nerf/data/mead/001.mp4', '/home/cxu-serve/p1/lchen63/nerf/data/mead/001/original', write_img = True )
+def main_video2imgs():
+    base_p = '/home/cxu-serve/p1/lchen63/nerf/data/mead/video'
+    for view_p in os.listdir(base_p):
+        current_p = os.path.join( base_p , view_p)
+        for motion_p in os.listdir(current_p):
+            current_p1 = os.path.join( current_p , motion_p)
+            for level_p in os.listdir(current_p1):
+                current_p2 = os.path.join( current_p2 , level_p)
+                for v_id in os.listdir(current_p2):
+                    if v_id[-4:] =='.mp4':
+                        v_p =  os.path.join( current_p2 , v_id)
+                        if not os.path.exists(v_p[:-4]):
+                            os.mkdir( v_p[:-4] )
+                        trans_video_to_imgs( v_p, v_p[:-4] , write_img = True )
+
+main_video2imgs()
