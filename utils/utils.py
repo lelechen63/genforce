@@ -158,7 +158,7 @@ def main_video2imgs():
         for motion_p in os.listdir(current_p):
             current_p1 = os.path.join( current_p , motion_p)
             for level_p in os.listdir(current_p1):
-                current_p2 = os.path.join( current_p2 , level_p)
+                current_p2 = os.path.join( current_p1 , level_p)
                 for v_id in os.listdir(current_p2):
                     if v_id[-4:] =='.mp4':
                         v_p =  os.path.join( current_p2 , v_id)
