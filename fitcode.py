@@ -177,6 +177,9 @@ def main():
     total_num = gt_imgs.shape[0]
     # define the code
     code = np.zeros( ( total_num, code_dim ), dtype = np.float32)
+
+    l1_loss = torch.nn.L1Loss().cuda()
+
    
 
     for batch_idx in tqdm(range(0, total_num, args.batch_size)): 
@@ -201,7 +204,7 @@ def main():
 
         # Define the optimizer
         code_optimizer = torch.optim.Adam( [
-            { 'params': batch_code, 'lr': args.lr }
+            { 'params': [batch_code], 'lr': args.lr }
         ] )
 
         # optimize
@@ -211,7 +214,6 @@ def main():
 
             # calculate loss:
             print (batch_gt_img.max(),batch_gt_img.min(),'========')
-
             print (images.max(),images.min())
 
             global_pix_loss = (batch_gt_img  - images).abs().mean()
